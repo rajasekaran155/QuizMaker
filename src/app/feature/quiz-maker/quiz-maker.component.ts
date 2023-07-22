@@ -6,6 +6,7 @@ import { QuestionSection } from 'src/app/shared/interfaces/question-section';
 import { WrapperTemplate } from 'src/app/shared/interfaces/wrapper-template';
 import { Router } from '@angular/router';
 import { SelectedOptions } from 'src/app/shared/interfaces/selected-options';
+import { Category } from 'src/app/shared/interfaces/category';
 
 @Component({
   selector: 'app-quiz-maker',
@@ -33,13 +34,13 @@ export class QuizMakerComponent implements OnInit {
   constructor(private service: ListCategoriesService,private route:Router) { }
   ngOnInit(): void {
     this.service.getListCategories().subscribe((data: CategoryOptions) => {
-      let array = data.trivia_categories;
+      let array:Category[] = data.trivia_categories;
       for (let i = 0; i < array.length; i++) {
         this.categoryOptions.push({id:array[i].id,value:array[i].name});
       }
     })
   }
-  categoryOption(value: number) :void{
+  categoryOption(value: number) :void {
     this.selectedCategoryOption = value;
   }
   difficultyOption(value: string) :void{
@@ -50,7 +51,7 @@ export class QuizMakerComponent implements OnInit {
     this.service.getQuizQuestions(this.selectedCategoryOption,this.selectedDifficultyOption).subscribe((data:WrapperTemplate)=> this.createQuestionSection(data));
   }
   decodeString(str:string) :string{
-    let text = document.createElement("textarea");
+    let text:HTMLTextAreaElement = document.createElement("textarea");
     text.innerHTML = str;
     return text.value;
   }    
@@ -59,7 +60,7 @@ export class QuizMakerComponent implements OnInit {
     this.isEnabled=false;
     this.selectedOptions=[];
     data.results.map((row)=>{
-      let options = row.incorrect_answers.map((option)=> this.decodeString(option));
+      let options:string[] = row.incorrect_answers.map((option)=> this.decodeString(option));
       options.push(this.decodeString(row.correct_answer));
       this.dataSource.push({
         question: this.decodeString(row.question),
@@ -85,7 +86,7 @@ export class QuizMakerComponent implements OnInit {
     return randomArray;
   }
   saveAnswer(answer:string,row:number,col:number):void{
-    let idValue='';
+    let idValue:string='';
     let flag:number=0;
     this.selectedOptions.forEach((data)=>{
       if(data.row==row){
